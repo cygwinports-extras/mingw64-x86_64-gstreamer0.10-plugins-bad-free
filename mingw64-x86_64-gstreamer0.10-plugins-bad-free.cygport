@@ -1,0 +1,50 @@
+CROSS_HOST="x86_64-w64-mingw32"
+GST_PLUGINS_ENABLE="acm assrender bz2 cog direct3d directdraw directsound gme
+	gsettings gsm jp2k kate modplug musepack openal opus resindvd rsvg
+	schro sdl sndfile soundtouch vp8 wildmidi wininet"
+GST_PLUGINS_DISABLE="apexsink cdaudio celt curl dc1394 dirac directfb divx dts
+	dvb faac faad fbdev flite ladspa lv2 libmms mimic mpeg2enc mplex
+	musicbrainz mythtv nas neon osx_video opencv ofa pvr quicktime rtmp
+	spandsp spc swfdec timidity vcd vdpau voaacenc voamrwbenc xvid zbar"
+inherit cross gst-plugins
+
+NAME="mingw64-x86_64-gstreamer0.10-plugins-bad-free"
+VERSION=0.10.23
+RELEASE=1
+CATEGORY="Devel"
+SUMMARY="GStreamer 0.10 Bad plugins for Win64 toolchain"
+DESCRIPTION="GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par
+compared to the rest. They might be close to being good quality, but they're
+missing something - be it a good code review, some documentation, a set of
+tests, a real live maintainer, or some actual wide use."
+md5sum=6a693a60ab61e53f4a223fe2e65e3b62
+SRC_URI="http://pkgs.fedoraproject.org/repo/pkgs/${NAME/0.10/}/gst-plugins-bad-free-${VERSION}.tar.xz/${md5sum}/gst-plugins-bad-free-${VERSION}.tar.xz"
+SRC_DIR="gst-plugins-bad-${VERSION}"
+PATCH_URI="
+	http://pkgs.fedoraproject.org/cgit/gstreamer-plugins-bad-free.git/plain/0001-gstcamerabin-Fix-spelling-error-in-debug-logging.patch
+	http://pkgs.fedoraproject.org/cgit/gstreamer-plugins-bad-free.git/plain/0002-camerabin-Add-a-camerabin_create_view_finder_caps-he.patch
+	http://pkgs.fedoraproject.org/cgit/gstreamer-plugins-bad-free.git/plain/0003-camerabin-Add-gst_camerabin_get_video_source_propert.patch
+	http://pkgs.fedoraproject.org/cgit/gstreamer-plugins-bad-free.git/plain/0004-camerabin-Set-src_filter-and-zoom_src_filter-caps-wh.patch
+	http://pkgs.fedoraproject.org/cgit/gstreamer-plugins-bad-free.git/plain/0005-geometrictransform-crash-fix1.patch
+	http://pkgs.fedoraproject.org/cgit/gstreamer-plugins-bad-free.git/plain/0006-geometrictransform-crash-fix2.patch
+	http://pkgs.fedoraproject.org/cgit/gstreamer-plugins-bad-free.git/plain/0001-modplug-Specify-directory-when-including-stdafx.h.patch
+	0.10.23-mingw32-librfb.patch
+"
+
+PKG_NAMES="${NAME} ${NAME}-extras"
+
+for ext in assrender gme kate modplug openal schro sdl wildmidi
+do
+	mingw64_x86_64_gstreamer0_10_plugins_bad_free_CONTENTS+=" --exclude=libgst${ext}*"
+	mingw64_x86_64_gstreamer0_10_plugins_bad_free_extras_CONTENTS+=" ${CROSS_LIBDIR#/}/gstreamer-0.10/libgst${ext}*"
+done
+unset ext
+
+mingw64_x86_64_gstreamer0_10_plugins_bad_free_CONTENTS+=" etc/ ${CROSS_PREFIX#/} usr/share/doc/"
+
+DIFF_EXCLUDES+=" *.gschema.xml"
+
+# frei0r plugins use .so suffix
+CPPFLAGS+=' -DGST_EXTRA_MODULE_SUFFIX="\".so\""'
+
+KEEP_LA_FILES="none"
