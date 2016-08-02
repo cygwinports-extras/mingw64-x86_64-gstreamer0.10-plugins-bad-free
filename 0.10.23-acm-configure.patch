@@ -1,0 +1,19 @@
+--- origsrc/gst-plugins-bad-0.10.23/configure.ac	2012-02-28 13:13:47.000000000 -0600
++++ src/gst-plugins-bad-0.10.23/configure.ac	2016-01-06 14:44:46.069355000 -0600
+@@ -1633,13 +1633,14 @@ dnl *** acm ***
+ translit(dnm, m, l) AM_CONDITIONAL(USE_ACM, true)
+ AG_GST_CHECK_FEATURE(ACM, [Windows ACM library], acm, [
+   AC_MSG_CHECKING([Checking for ACM support])
+-  AC_CHECK_HEADERS([windows.h msacm.h],
++  AC_CHECK_HEADERS([msacm.h],
+       [HAVE_ACM="yes"
+        AC_SUBST(ACMENC_CFLAGS)
+        AC_SUBST(ACMMP3DEC_CFLAGS)
+       ], [HAVE_ACM="no"],
+       [AC_INCLUDES_DEFAULT
+-#include <windows.h>])
++#include <windows.h>
++#include <mmreg.h>])
+ ])
+ 
+ dnl *** vdpau ***
